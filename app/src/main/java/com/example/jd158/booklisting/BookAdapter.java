@@ -25,7 +25,9 @@ public class BookAdapter extends ArrayAdapter {
 
         }
 
-        /**
+
+
+    /**
          * Provides a view for an AdapterView (ListView, GridView, etc.)
          *
          * @param position The position in the list of data that should be displayed in the

@@ -6,11 +6,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
+
 import android.widget.ListView;
-import android.widget.TextView;
+
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,6 +26,11 @@ import java.util.ArrayList;
 
 public class BookActivity extends AppCompatActivity {
 
+    BookAdapter adapterGlobal;
+    // Find a reference to the {@link ListView} in the layout
+    ListView bookListViewGlobal;
+    ArrayList<Book> booksGlobal;
+
     /**
      * Tag for the log messages
      *
@@ -39,8 +42,7 @@ public class BookActivity extends AppCompatActivity {
     public static String title = null;
     public static String author = null;
 
-    // Create an empty ArrayList that we can start adding earthquakes to
-    ArrayList<Book> books = new ArrayList<>();
+
 
 /**
      * URL to query the USGS dataset for Books information
@@ -62,12 +64,19 @@ public class BookActivity extends AppCompatActivity {
         BookAsyncTask task = new BookAsyncTask();
         task.execute();
 
+        // Create an empty ArrayList that we can start adding earthquakes to
+        ArrayList<Book> books = new ArrayList<>();
+
+        booksGlobal = books;
+
         // Create a new {@link ArrayAdapter} of earthquakes
         BookAdapter adapter = new BookAdapter(this, books);
         // Find a reference to the {@link ListView} in the layout
         ListView bookListView = (ListView) findViewById(R.id.list);
-        // so the list can be populated in the user interface
-        bookListView.setAdapter(adapter);
+
+        bookListViewGlobal = bookListView;
+        adapterGlobal = adapter;
+
 
     }
 
@@ -83,7 +92,7 @@ public class BookActivity extends AppCompatActivity {
      * {@link AsyncTask} to perform the network request on a background thread, and then
      * update the UI with the first book in the response.
      */
-    private class BookAsyncTask extends AsyncTask<URL, Void, Book> {
+    public class BookAsyncTask extends AsyncTask<URL, Void, Book> {
 
         @Override
         protected Book doInBackground(URL... urls) {
@@ -121,7 +130,9 @@ public class BookActivity extends AppCompatActivity {
             if (book == null) {
                 return;
             }
-
+            // so the list can be populated in the user interface
+           // bookListViewGlobal.setAdapter(adapterGlobal);
+            adapterGlobal.addAll(booksGlobal);
         }
 
         /**
@@ -220,11 +231,9 @@ public class BookActivity extends AppCompatActivity {
                     title = properties.getString("title");
                     author = properties.getString("authors");
 
-
-                    books.add(new Book(title, author));
                     // Create a new {@link Book} object
-
-                   // return new Book(title, author);
+                    booksGlobal.add(new Book(title, author));
+                    return new Book(title, author);
 
                 }
             } catch (JSONException e) {
