@@ -27,10 +27,8 @@ import java.util.ArrayList;
 public class BookActivity extends AppCompatActivity {
 
     BookAdapter adapterGlobal;
-    // Find a reference to the {@link ListView} in the layout
     ListView bookListViewGlobal;
     ArrayList<Book> booksGlobal;
-
     /**
      * Tag for the log messages
      *
