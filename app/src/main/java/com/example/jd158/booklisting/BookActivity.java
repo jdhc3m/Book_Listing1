@@ -39,13 +39,10 @@ public class BookActivity extends AppCompatActivity {
     public static String title = null;
     public static String author = null;
 
-    public static String searchText;
-
     // Create an empty ArrayList that we can start adding earthquakes to
     ArrayList<Book> books = new ArrayList<>();
 
-
-    /**
+/**
      * URL to query the USGS dataset for Books information
      */
     private static String USGS_REQUEST_URL = null;
@@ -65,18 +62,12 @@ public class BookActivity extends AppCompatActivity {
         BookAsyncTask task = new BookAsyncTask();
         task.execute();
 
-
-
-        // Find a reference to the {@link ListView} in the layout
-        ListView bookListView = (ListView) findViewById(R.id.list);
-
         // Create a new {@link ArrayAdapter} of earthquakes
         BookAdapter adapter = new BookAdapter(this, books);
-
-        // Set the adapter on the {@link ListView}
+        // Find a reference to the {@link ListView} in the layout
+        ListView bookListView = (ListView) findViewById(R.id.list);
         // so the list can be populated in the user interface
         bookListView.setAdapter(adapter);
-
 
     }
 
@@ -86,9 +77,6 @@ public class BookActivity extends AppCompatActivity {
      * Update the screen to display information from the given {@link Book}.
      */
     private void updateUi(Book book) {
-
-
-
 
     }
     /**
@@ -134,13 +122,6 @@ public class BookActivity extends AppCompatActivity {
                 return;
             }
 
-            // Find a reference to the {@link ListView} in the layout
-            ListView earthquakeListView = (ListView) findViewById(R.id.list);
-
-
-
-
-            //updateUi(book);
         }
 
         /**
@@ -230,8 +211,6 @@ public class BookActivity extends AppCompatActivity {
                 JSONObject baseJsonResponse = new JSONObject(bookJSON);
                 JSONArray bookArray = baseJsonResponse.getJSONArray("items");
 
-                // If there are results in the features array
-                //if (bookArray.length() > 0) {
                 // Loop through each feature in the array
                 for(int i = 0; i < bookArray.length(); i++) {
                     // Extract out the first feature (which is an book)
@@ -250,7 +229,9 @@ public class BookActivity extends AppCompatActivity {
                 }
             } catch (JSONException e) {
                 Log.e(LOG_TAG, "Problem parsing the book JSON results", e);
+
             }
+            //books.add(new Book("Book not found, please try again", ""));
             return null;
         }
     }
