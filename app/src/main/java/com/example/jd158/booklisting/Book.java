@@ -1,13 +1,15 @@
 package com.example.jd158.booklisting;
 
+import java.util.ArrayList;
+
 /**
  * Created by jd158 on 5/10/2016.
  */
-public class Book {
+public class Book extends ArrayList {
     
 
     // Author of the Book
-    private String mAuthor;
+    private ArrayList mAuthor;
 
     /** Title of the book */
     private String mTitle;
@@ -16,19 +18,14 @@ public class Book {
     private String mUrl;
 
 
-    public Book(String Author, String Title, String Url)  {
-        mAuthor = Author;
-        mTitle = Title;
-        mUrl = Url;
-    }
 
-    public Book(String Author, String Title)  {
+    public Book(ArrayList Author, String Title)  {
         mAuthor = Author;
         mTitle = Title;
     }
 
     
-    public String getAuthor() {
+    public ArrayList getAuthor() {
         return mAuthor;
     }
 
@@ -36,7 +33,5 @@ public class Book {
         return mTitle;
     }
 
-    public String getUrl() {
-        return mUrl;
-    }
+
 }

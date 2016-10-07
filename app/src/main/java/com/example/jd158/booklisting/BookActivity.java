@@ -1,6 +1,10 @@
 package com.example.jd158.booklisting;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -8,7 +12,12 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import android.widget.ListView;
+import android.widget.Toast;
 
+
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.GoogleApiClient;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,11 +36,12 @@ import java.util.ArrayList;
 public class BookActivity extends AppCompatActivity {
 
     BookAdapter adapterGlobal;
+    // Find a reference to the {@link ListView} in the layout
     ListView bookListViewGlobal;
-    ArrayList<Book> booksGlobal;
+    ArrayList<Book> booksGlobalArray;
+
     /**
      * Tag for the log messages
-     *
      */
     public static final String LOG_TAG = MainActivity.class.getSimpleName();
 
@@ -41,11 +51,16 @@ public class BookActivity extends AppCompatActivity {
     public static String author = null;
 
 
-
-/**
+    /**
      * URL to query the USGS dataset for Books information
      */
     private static String USGS_REQUEST_URL = null;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,9 +69,10 @@ public class BookActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String userInput = intent.getStringExtra("bookText");
 
+
         USGS_REQUEST_URL = "https://www.googleapis.com/books/v1/volumes?q=";
 
-        USGS_REQUEST_URL += userInput.replaceAll(" ","+") + "&maxResults=20";
+        USGS_REQUEST_URL += userInput.replaceAll(" ", "+") + "&maxResults=20";
 
         // Kick off an {@link AsyncTask} to perform the network request
         BookAsyncTask task = new BookAsyncTask();
@@ -65,20 +81,20 @@ public class BookActivity extends AppCompatActivity {
         // Create an empty ArrayList that we can start adding earthquakes to
         ArrayList<Book> books = new ArrayList<>();
 
-        booksGlobal = books;
+        booksGlobalArray = new ArrayList<Book>();
 
-        // Create a new {@link ArrayAdapter} of earthquakes
-        BookAdapter adapter = new BookAdapter(this, books);
         // Find a reference to the {@link ListView} in the layout
         ListView bookListView = (ListView) findViewById(R.id.list);
-
         bookListViewGlobal = bookListView;
+
+        // Create a new {@link ArrayAdapter} of earthquakes
+        BookAdapter adapter = new BookAdapter(this, booksGlobalArray);
         adapterGlobal = adapter;
 
-
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
-
-
 
     /**
      * Update the screen to display information from the given {@link Book}.
@@ -86,14 +102,55 @@ public class BookActivity extends AppCompatActivity {
     private void updateUi(Book book) {
 
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Book Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app URL is correct.
+                Uri.parse("android-app://com.example.jd158.booklisting/http/host/path")
+        );
+        AppIndex.AppIndexApi.start(client, viewAction);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Book Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app URL is correct.
+                Uri.parse("android-app://com.example.jd158.booklisting/http/host/path")
+        );
+        AppIndex.AppIndexApi.end(client, viewAction);
+        client.disconnect();
+    }
+
     /**
      * {@link AsyncTask} to perform the network request on a background thread, and then
      * update the UI with the first book in the response.
      */
-    public class BookAsyncTask extends AsyncTask<URL, Void, Book> {
+    public class BookAsyncTask extends AsyncTask<URL, Void, ArrayList<Book>> {
 
         @Override
-        protected Book doInBackground(URL... urls) {
+        protected ArrayList<Book> doInBackground(URL... urls) {
             // Create URL object
             URL url = null;
             try {
@@ -113,7 +170,8 @@ public class BookActivity extends AppCompatActivity {
             }
 
             // Extract relevant fields from the JSON response and create an {@link Book} object
-            Book book = extractFeatureFromJson(jsonResponse);
+            ArrayList book = extractFeatureFromJson(jsonResponse);
+
 
             // Return the {@link Book} object as the result fo the {@link TsunamiAsyncTask}
             return book;
@@ -124,13 +182,13 @@ public class BookActivity extends AppCompatActivity {
          * {@link BookAsyncTask}).
          */
         @Override
-        protected void onPostExecute(Book book) {
+        protected void onPostExecute(ArrayList<Book> book) {
             if (book == null) {
                 return;
             }
             // so the list can be populated in the user interface
-           // bookListViewGlobal.setAdapter(adapterGlobal);
-            adapterGlobal.addAll(booksGlobal);
+            // bookListViewGlobal.setAdapter(adapterGlobal);
+            adapterGlobal.addAll(booksGlobalArray);
         }
 
         /**
@@ -210,28 +268,38 @@ public class BookActivity extends AppCompatActivity {
          * Return an {@link Book} object by parsing out information
          * about the first book from the input bookJSON string.
          */
-        private Book extractFeatureFromJson(String bookJSON) {
+        private ArrayList<Book> extractFeatureFromJson(String bookJSON) {
             // if the JSON string is empty or null, then return early.
             if (TextUtils.isEmpty(bookJSON)) {
                 return null;
             }
-
+            ArrayList authors = new ArrayList();
             try {
                 JSONObject baseJsonResponse = new JSONObject(bookJSON);
                 JSONArray bookArray = baseJsonResponse.getJSONArray("items");
 
                 // Loop through each feature in the array
-                for(int i = 0; i < bookArray.length(); i++) {
+                for (int i = 0; i < bookArray.length(); i++) {
                     // Extract out the first feature (which is an book)
                     JSONObject firstFeature = bookArray.getJSONObject(i);
                     JSONObject properties = firstFeature.getJSONObject("volumeInfo");
+                    JSONArray authorsArray = properties.optJSONArray("authors");
+
+                    if (properties.has("authors")) {
+                        for (int j = 0; j < authorsArray.length(); j++) {
+
+                            authors.add(authorsArray.getString(j));
+                        }
+                    } else {
+                        authors.add("No Author");
+                    }
+
                     // Extract out the title and Author values
                     title = properties.getString("title");
-                    author = properties.getString("authors");
 
                     // Create a new {@link Book} object
-                    booksGlobal.add(new Book(title, author));
-                    return new Book(title, author);
+                    booksGlobalArray.add(new Book(authors, title));
+
 
                 }
             } catch (JSONException e) {
@@ -239,7 +307,11 @@ public class BookActivity extends AppCompatActivity {
 
             }
             //books.add(new Book("Book not found, please try again", ""));
-            return null;
+            return booksGlobalArray;
+            //return new Book(authors, title);
+            //return null;
         }
     }
+
+
 }

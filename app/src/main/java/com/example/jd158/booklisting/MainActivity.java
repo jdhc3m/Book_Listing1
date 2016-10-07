@@ -1,6 +1,9 @@
 package com.example.jd158.booklisting;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -39,16 +43,35 @@ public class MainActivity extends AppCompatActivity {
     }
     public void search (View view) {
 
-        EditText textSearchBook = (EditText) findViewById(R.id.search_text);
+        // Check if the internet connection is available
+        if  ( hasconection() == true ) {
 
-        // Create a new intent to open the {@link NumbersActivity}
-        Intent bookIntent = new Intent(MainActivity.this, BookActivity.class);
+            EditText textSearchBook = (EditText) findViewById(R.id.search_text);
 
-        // Use this to pass textSearchBook to BookActivity
-        bookIntent.putExtra("bookText", textSearchBook.getText().toString());
+            // Create a new intent to open the {@link NumbersActivity}
+            Intent bookIntent = new Intent(MainActivity.this, BookActivity.class);
 
-        // Start the new activity
-        startActivity(bookIntent);
+            // Use this to pass textSearchBook to BookActivity
+            bookIntent.putExtra("bookText", textSearchBook.getText().toString());
+
+            // Start the new activity
+            startActivity(bookIntent);
+        }
+        else {
+            Toast.makeText(MainActivity.this, "Please check your connection", Toast.LENGTH_LONG).show();
+            onStop();
+        }
+
     }
+    public boolean hasconection(){
+        ConnectivityManager cm =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+        return isConnected;
+    }
+
 }
 
