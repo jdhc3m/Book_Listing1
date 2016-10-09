@@ -6,6 +6,19 @@
     android:layout_marginTop="10dp">
 
     <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:ellipsize="end"
+        android:fontFamily="sans-serif-medium"
+        android:maxLines="1"
+        android:layout_marginBottom="3dp"
+
+        android:textColor="@color/textColorBookTitle"
+        android:textSize="15sp"
+        android:text="Title"
+        />
+    <TextView
         android:id="@+id/author"
         android:layout_width="wrap_content"
         android:layout_height="45dp"
@@ -19,17 +32,5 @@
         android:text="Author"
          />
 
-    <TextView
-        android:id="@+id/title"
-        android:layout_width="wrap_content"
-        android:layout_height="45dp"
-        android:ellipsize="end"
-        android:fontFamily="sans-serif-medium"
-        android:maxLines="1"
-        android:layout_marginBottom="3dp"
 
-        android:textColor="@color/textColorBookTitle"
-        android:textSize="15sp"
-        android:text="Title"
-        />
 </LinearLayout>

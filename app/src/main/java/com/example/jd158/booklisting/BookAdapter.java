@@ -21,7 +21,7 @@ public class BookAdapter extends ArrayAdapter<Book> {
 
 
     //We initialize the ArrayAdapter's internal storage for the context and the list.
-    public BookAdapter(Context context, ArrayList<Book> books) {
+    public BookAdapter(Activity context, ArrayList<Book> books) {
         super(context, 0, books);
 
     }
@@ -45,34 +45,35 @@ public class BookAdapter extends ArrayAdapter<Book> {
                     R.layout.book_list_item, parent, false);
 
 
-        // Get the {@link Earthquake} object located at this position in the list
-        Book currentBook = (Book) getItem(position);
+            // Get the {@link Earthquake} object located at this position in the list
+            Book currentBook = getItem(position);
 
-        // Find the ImageView in the list_item.xml layout with the ID version_name
-        TextView authorView = (TextView) listItemView.findViewById(R.id.author);
+            // Find the Author in the list_item.xml layout with the ID version_name
+            TextView authorView = (TextView) listItemView.findViewById(R.id.author);
 
-        // set this text on the name TextView
-        // String Builder make a string and after adds more text on it
-        StringBuilder allAuthors = new StringBuilder();
+            // Find the Title in the list_item.xml layout with the ID version_name
+            TextView titleView = (TextView) listItemView.findViewById(R.id.title);
 
-        for (int i = 0; i < currentBook.getAuthor().size(); i++) {
-            // Get the current author and adds on thisAuthor
-            String thisAuthor = currentBook.getAuthor().get(i).toString();
-            // Get the current author and adds on All authors in sequence "Author 1 + Author 2 + Author 3"
-            allAuthors.append(thisAuthor);
+            // set this text on the name TextView
+            titleView.setText(currentBook.getTitle());
 
-            // To aid visual clarity, a comma is added to the end of each author's name if there is another author to follow
-            if (i < currentBook.getAuthor().size() - 1) {
-                allAuthors.append(", ");
+            // set this text on the name TextView
+            // String Builder make a string and after adds more text on it
+            StringBuilder allAuthors = new StringBuilder();
+
+            for (int i = 0; i < currentBook.getAuthor().size(); i++) {
+                // Get the current author and adds on thisAuthor
+                String thisAuthor = currentBook.getAuthor().get(i).toString();
+                // Get the current author and adds on All authors in sequence "Author 1 + Author 2 + Author 3"
+                allAuthors.append(thisAuthor);
+
+                // To aid visual clarity, a comma is added to the end of each author's name if there is another author to follow
+                if (i < currentBook.getAuthor().size() - 1) {
+                    allAuthors.append(", ");
+                }
+                authorView.setText(allAuthors);
             }
-            authorView.setText(allAuthors);
-        }
 
-        // Find the ImageView in the list_item.xml layout with the ID version_name
-        TextView titleView = (TextView) listItemView.findViewById(R.id.title);
-
-        // set this text on the name TextView
-        titleView.setText(currentBook.getTitle());
 
         }
         return listItemView;

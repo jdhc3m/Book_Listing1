@@ -9,6 +9,7 @@
         android:layout_height="50dp"
         android:layout_gravity="center"
         android:layout_marginTop="16dp"
+        android:text="android"
         />
     <Button
         android:id="@+id/search_button"

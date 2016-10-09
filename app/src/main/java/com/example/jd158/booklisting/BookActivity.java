@@ -32,6 +32,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class BookActivity extends AppCompatActivity {
 
@@ -72,7 +73,7 @@ public class BookActivity extends AppCompatActivity {
 
         USGS_REQUEST_URL = "https://www.googleapis.com/books/v1/volumes?q=";
 
-        USGS_REQUEST_URL += userInput.replaceAll(" ", "+") + "&maxResults=20";
+        USGS_REQUEST_URL += userInput.replaceAll(" ", "+");
 
         // Kick off an {@link AsyncTask} to perform the network request
         BookAsyncTask task = new BookAsyncTask();
@@ -170,11 +171,13 @@ public class BookActivity extends AppCompatActivity {
             }
 
             // Extract relevant fields from the JSON response and create an {@link Book} object
-            ArrayList book = extractFeatureFromJson(jsonResponse);
+            //ArrayList book = extractFeatureFromJson(jsonResponse);
+            booksGlobalArray = extractFeatureFromJson(jsonResponse);
 
 
             // Return the {@link Book} object as the result fo the {@link TsunamiAsyncTask}
-            return book;
+            //return books;
+            return booksGlobalArray;
         }
 
         /**
@@ -186,9 +189,11 @@ public class BookActivity extends AppCompatActivity {
             if (book == null) {
                 return;
             }
+            BookAdapter bookAdapter = new BookAdapter(BookActivity.this, book);
+            bookListViewGlobal.setAdapter(bookAdapter);
             // so the list can be populated in the user interface
             // bookListViewGlobal.setAdapter(adapterGlobal);
-            adapterGlobal.addAll(booksGlobalArray);
+           // adapterGlobal.addAll(booksGlobalArray);
         }
 
         /**
@@ -273,7 +278,7 @@ public class BookActivity extends AppCompatActivity {
             if (TextUtils.isEmpty(bookJSON)) {
                 return null;
             }
-            ArrayList authors = new ArrayList();
+
             try {
                 JSONObject baseJsonResponse = new JSONObject(bookJSON);
                 JSONArray bookArray = baseJsonResponse.getJSONArray("items");
@@ -284,7 +289,8 @@ public class BookActivity extends AppCompatActivity {
                     JSONObject firstFeature = bookArray.getJSONObject(i);
                     JSONObject properties = firstFeature.getJSONObject("volumeInfo");
                     JSONArray authorsArray = properties.optJSONArray("authors");
-
+                    ArrayList authors = new ArrayList();
+                    //
                     if (properties.has("authors")) {
                         for (int j = 0; j < authorsArray.length(); j++) {
 
@@ -308,6 +314,8 @@ public class BookActivity extends AppCompatActivity {
             }
             //books.add(new Book("Book not found, please try again", ""));
             return booksGlobalArray;
+
+
             //return new Book(authors, title);
             //return null;
         }
